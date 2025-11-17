@@ -1,5 +1,5 @@
 // controllers/userController.js
-const db = require('../config/db');
+const db = require('../db');
 const { comparePasswords } = require('../middleware/validation');
 
 // =======================
