@@ -9,6 +9,7 @@ const path = require('path');
 // Routers
 const authRouter = require('./routes/authRouter');
 const authMiddleware = require('./middleware/authMiddleware');
+const CardDelivery = require('./models/CardDelivery');
 
 const app = express();
 
@@ -47,8 +48,30 @@ app.get("/login", (req, res) => res.render("login", { errors: [] }));
 app.get("/signup", (req, res) => res.render("signup", { errors: [] }));
 
 // Protected dashboard
-app.get("/dashboard", authMiddleware, (req, res) => {
-    res.render("dashboard", { user: req.user });
+app.get("/dashboard", authMiddleware, async (req, res) => {
+    try {
+        const deliveries = await CardDelivery.find().lean();
+
+        const stats = {
+            total: deliveries.length,
+            delivered: deliveries.filter(d => d.status === 'Delivered').length,
+            inTransit: deliveries.filter(d => d.status === 'InTransit').length,
+            exceptions: deliveries.filter(d => d.status === 'Failed' || d.status === 'Delayed').length,
+        };
+
+        res.render("dashboard", {
+            user: req.user,
+            deliveries,
+            stats,
+        });
+    } catch (err) {
+        console.error(err);
+        res.render("dashboard", {
+            user: req.user,
+            deliveries: [],
+            stats: { total: 0, delivered: 0, inTransit: 0, exceptions: 0 },
+        });
+    }
 });
 
 // API routes (signup, signin, logout)
