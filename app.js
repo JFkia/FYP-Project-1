@@ -7,13 +7,14 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 
 // Routers
+const contactRouter = require('./routes/contactRouter');
 const authRouter = require('./routes/authRouter');
 const authMiddleware = require('./middleware/authMiddleware');
 const CardDelivery = require('./models/CardDelivery');
 
 const app = express();
 
-// ---------------- MIDDLEWARE ----------------
+// Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
@@ -24,7 +25,6 @@ app.use(express.static(path.join(__dirname, "public")));
 // EJS setup
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-
 // Make user available in ALL EJS files
 app.use((req, res, next) => {
     res.locals.user = null;
@@ -45,7 +45,10 @@ app.use((req, res, next) => {
 // Render pages
 app.get("/", (req, res) => res.redirect("/login"));
 app.get("/login", (req, res) => res.render("login", { errors: [] }));
-app.get("/signup", (req, res) => res.render("signup", { errors: [] }));
+app.get("/signup", (req, res) => res.render("signup", { errors: [], formData: {} }));
+app.get("/about", (req, res) => res.render("about", { errors: [], formData: {} }));
+app.get("/contact", (req, res) => res.render("contact", { errors: [], formData: {} }));
+app.get("/profile", (req, res) => res.render("profile"));
 
 // Protected dashboard
 app.get("/dashboard", authMiddleware, async (req, res) => {
@@ -81,9 +84,9 @@ app.use("/", authRouter);
 mongoose
     .connect(process.env.MONGODB_URI)
     .then(() => {
-        console.log("✅ Connected to MongoDB");
+        console.log("Connected to MongoDB");
         app.listen(process.env.PORT || 5000, () => {
-            console.log("🚀 Server running on http://localhost:" + (process.env.PORT || 5000));
+            console.log("Server running on http://localhost:" + (process.env.PORT || 5000));
         });
     })
-    .catch((err) => console.error("❌ MongoDB Error:", err));
+    .catch((err) => console.error("MongoDB Error:", err));
