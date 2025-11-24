@@ -1,71 +1,135 @@
+// controllers/userController.js
+
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 const SALT = 10;
 
-// Helper to create JWT
+// Move this to .env later: process.env.ADMIN_SECRET
+const ADMIN_SECRET = process.env.ADMIN_SECRET || "MY_SUPER_SECRET_ADMIN_CODE";
+
+// Helper to create JWT (for login later)
 const createToken = (user) =>
   jwt.sign(
     {
       id: user._id,
       email: user.email,
       role: user.role,
-      name: user.name
+      name: user.name,
     },
-    process.env.JWT_SECRET,
+    process.env.JWT_SECRET || "DEV_JWT_SECRET",
     { expiresIn: "1d" }
   );
 
-// Signup Controller
+// ========== SIGNUP ==========
+
+// GET: show signup page
+exports.showSignupForm = (req, res) => {
+  res.render("signup", {
+    errors: [],
+    formData: {}, // so we can repopulate on error
+  });
+};
+
+// POST: handle signup
 exports.signup = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, adminCode } = req.body;
 
+    const formData = { name, email, role }; // for repopulating form
+    const errors = [];
+
+    // Basic validation
+    if (!name || !email || !password) {
+      errors.push("Name, email and password are required");
+    }
+
+    // Check email already used
     const existing = await User.findOne({ email });
-    if (existing) return res.render("signup", { error: "Email already taken" });
+    if (existing) {
+      errors.push("Email already taken");
+    }
+
+    // If user chose admin, verify adminCode
+    if (role === "admin") {
+      if (!adminCode) {
+        errors.push("Admin access code is required for admin role");
+      } else if (adminCode !== ADMIN_SECRET) {
+        errors.push("Invalid admin access code");
+      }
+    }
+
+    if (errors.length > 0) {
+      return res.render("signup", { errors, formData });
+    }
 
     const passwordHash = await bcrypt.hash(password, SALT);
 
-    const user = await User.create({
+    await User.create({
       name,
       email,
       passwordHash,
-      role: role || "user",
+      role: role === "admin" ? "admin" : "user",
     });
 
-    res.redirect('/login');
+    res.redirect("/login");
   } catch (err) {
-    console.log(err);
-    res.render("signup", { error: "Something went wrong" });
+    console.error(err);
+    res.render("signup", {
+      errors: ["Something went wrong"],
+      formData: req.body,
+    });
   }
 };
 
-// Signin Controller
+// ========== SIGNIN / LOGIN ==========
+
+// POST: handle sign in / login
 exports.signin = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const errors = [];
+
+    if (!email || !password) {
+      errors.push("Email and password are required");
+      return res.render("login", { errors });
+    }
 
     const user = await User.findOne({ email });
-    if (!user)
-      return res.render("login", { error: "Invalid credentials" });
+    if (!user) {
+      errors.push("Invalid email or password");
+      return res.render("login", { errors });
+    }
 
-    const valid = await bcrypt.compare(password, user.passwordHash);
-    if (!valid)
-      return res.render("login", { error: "Invalid credentials" });
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    if (!isMatch) {
+      errors.push("Invalid email or password");
+      return res.render("login", { errors });
+    }
 
     const token = createToken(user);
 
-    res.cookie("token", token, { httpOnly: true });
-    res.redirect('/dashboard');
+    // Store token in cookie (adjust name/options as needed)
+    res.cookie("token", token, {
+      httpOnly: true,
+      // secure: true, // enable in production + HTTPS
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    res.redirect("/dashboard"); // change to your dashboard route
   } catch (err) {
-    console.log(err);
-    res.render("login", { error: "Something went wrong" });
+    console.error(err);
+    res.render("login", { errors: ["Something went wrong during login"] });
   }
 };
 
-// Logout
+// ========== LOGOUT ==========
+
+// GET: handle logout
 exports.logout = (req, res) => {
   res.clearCookie("token");
-  res.redirect('/login');
+  res.redirect("/login");
 };
+
+// (no module.exports override – we only use exports.<name>)
