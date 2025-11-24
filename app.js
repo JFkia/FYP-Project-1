@@ -2,7 +2,7 @@
 require('dotenv').config();
 
 const express = require('express');
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 
@@ -10,6 +10,11 @@ const authRouter = require('./routes/authRouter');
 const authMiddleware = require('./middleware/authMiddleware');
 
 const app = express();
+
+app.listen(4000, () => {
+    console.log("Server running on port 4000");
+});
+
 
 // -------------------- MIDDLEWARE -------------------- //
 
@@ -47,15 +52,25 @@ app.get('/dashboard', authMiddleware, (req, res) => {
   res.render('dashboard', { user: req.user });
 });
 
+// Audit Log routes (must be BEFORE 404 handler)
+const auditRoutes = require("./routes/auditRoutes");
+app.use("/", auditRoutes);
+
 // Simple home route -> redirect to login
 app.get('/', (req, res) => {
   res.redirect('/login');
 });
 
+
+
 // 404 fallback (optional)
 app.use((req, res) => {
   res.status(404).send('Page not found');
 });
+
+
+
+
 
 // -------------------- DATABASE + SERVER -------------------- //
 
