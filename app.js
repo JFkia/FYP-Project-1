@@ -8,9 +8,11 @@ const path = require('path');
 
 // Routers
 const contactRouter = require('./routes/contactRouter');
+const auditRouter = require('./routes/auditRouter');
 const authRouter = require('./routes/authRouter');
 const authMiddleware = require('./middleware/authMiddleware');
 const CardDelivery = require('./models/CardDelivery');
+const deliveryRouter = require('./routes/deliveryRouter');
 
 const app = express();
 
@@ -79,6 +81,12 @@ app.get("/dashboard", authMiddleware, async (req, res) => {
 
 // API routes (signup, signin, logout)
 app.use("/", authRouter);
+
+// Audit routes
+app.use("/", auditRouter);
+
+// Delivery routes
+app.use('/deliveries', authMiddleware, deliveryRouter);
 
 // ---------------- DATABASE + SERVER ----------------
 mongoose
