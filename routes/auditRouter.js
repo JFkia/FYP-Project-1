@@ -7,6 +7,6 @@ const { getAuditLogs } = require("../controllers/auditController");
 router.get("/auditLog", getAuditLogs);
 
 // Default route → redirect to audit log
-router.get("/", (req, res) => res.redirect("/audit-log"));
+router.get("/", (req, res) => res.redirect("/auditLog"));
 
 module.exports = router;
