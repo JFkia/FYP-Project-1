@@ -26,89 +26,90 @@
 </head>
 
 <body>
+    <%- include("partials/navbar") %>    
+    <div class="sidebar-hover-zone">
+    <%- include("partials/sidebar") %>
+    <div>
+        <div class="container py-5">
 
-    <%- include('partials/navbar') %>
+            <!-- Welcome text -->
+            <div class="text-white mb-4">
+                <h2>Welcome, <%= user ? user.name : "Guest" %></h2>
+                <p>Your role: <strong><%= user ? user.role : "N/A" %></strong></p>
+            </div>
 
-    <div class="container py-5">
+            <!-- Stats Row -->
+            <div class="row g-3">
 
-        <!-- Welcome text -->
-        <div class="text-white mb-4">
-            <h2>Welcome, <%= user ? user.name : "Guest" %></h2>
-            <p>Your role: <strong><%= user ? user.role : "N/A" %></strong></p>
-        </div>
+                <div class="col-md-3">
+                    <div class="card-box text-center">
+                        <p class="text-muted">Total Deliveries</p>
+                        <p class="stat-number"><%= stats ? stats.total : 0 %></p>
+                    </div>
+                </div>
 
-        <!-- Stats Row -->
-        <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="card-box text-center">
+                        <p class="text-muted">Delivered</p>
+                        <p class="stat-number text-success"><%= stats ? stats.delivered : 0 %></p>
+                    </div>
+                </div>
 
-            <div class="col-md-3">
-                <div class="card-box text-center">
-                    <p class="text-muted">Total Deliveries</p>
-                    <p class="stat-number"><%= stats ? stats.total : 0 %></p>
+                <div class="col-md-3">
+                    <div class="card-box text-center">
+                        <p class="text-muted">In Transit</p>
+                        <p class="stat-number text-info"><%= stats ? stats.inTransit : 0 %></p>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card-box text-center">
+                        <p class="text-muted">Exceptions</p>
+                        <p class="stat-number text-danger"><%= stats ? stats.exceptions : 0 %></p>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-md-3">
-                <div class="card-box text-center">
-                    <p class="text-muted">Delivered</p>
-                    <p class="stat-number text-success"><%= stats ? stats.delivered : 0 %></p>
-                </div>
-            </div>
+            <!-- Table -->
+            <div class="card-box mt-4">
+                <h4 class="mb-3">Delivery Records</h4>
 
-            <div class="col-md-3">
-                <div class="card-box text-center">
-                    <p class="text-muted">In Transit</p>
-                    <p class="stat-number text-info"><%= stats ? stats.inTransit : 0 %></p>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="card-box text-center">
-                    <p class="text-muted">Exceptions</p>
-                    <p class="stat-number text-danger"><%= stats ? stats.exceptions : 0 %></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Table -->
-        <div class="card-box mt-4">
-            <h4 class="mb-3">Delivery Records</h4>
-
-            <table class="table table-bordered table-striped bg-white">
-                <thead class="table-light">
-                    <tr>
-                        <th>Customer</th>
-                        <th>Card ID</th>
-                        <th>Vendor</th>
-                        <th>Dispatch Date</th>
-                        <th>Status</th>
-                        <th>Tracking #</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <% if (deliveries && deliveries.length > 0) { %>
-                        <% deliveries.forEach(d => { %>
-                            <tr>
-                                <td><%= d.customerName %></td>
-                                <td><%= d.cardId %></td>
-                                <td><%= d.vendor %></td>
-                                <td><%= d.dispatchDate %></td>
-                                <td><%= d.status %></td>
-                                <td><%= d.trackingNumber %></td>
-                            </tr>
-                        <% }) %>
-                    <% } else { %>
+                <table class="table table-bordered table-striped bg-white">
+                    <thead class="table-light">
                         <tr>
-                            <td colspan="6" class="text-center text-muted">
-                                No delivery records found.
-                            </td>
+                            <th>Customer</th>
+                            <th>Card ID</th>
+                            <th>Vendor</th>
+                            <th>Dispatch Date</th>
+                            <th>Status</th>
+                            <th>Tracking #</th>
                         </tr>
-                    <% } %>
-                </tbody>
-            </table>
+                    </thead>
 
+                    <tbody>
+                        <% if (deliveries && deliveries.length > 0) { %>
+                            <% deliveries.forEach(d => { %>
+                                <tr>
+                                    <td><%= d.customerName %></td>
+                                    <td><%= d.cardId %></td>
+                                    <td><%= d.vendor %></td>
+                                    <td><%= d.dispatchDate %></td>
+                                    <td><%= d.status %></td>
+                                    <td><%= d.trackingNumber %></td>
+                                </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">
+                                    No delivery records found.
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+
+            </div>
         </div>
-
     </div>
 
     <%- include('partials/footer') %>
