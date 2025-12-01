@@ -13,5 +13,5 @@ exports.getAuditLogs = async (req, res) => {
     }
   ];
 
-  res.render("audit-log", { logs: fakeLogs });
+  res.render("auditLog", { logs: fakeLogs });
 };

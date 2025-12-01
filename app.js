@@ -2,11 +2,9 @@
 require('dotenv').config();
 
 const express = require('express');
-// const mongoose = require('mongoose');
-const path = require('path');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
-
+const path = require('path');
 
 // Routers
 const contactRouter = require('./routes/contactRouter');
@@ -15,16 +13,6 @@ const authMiddleware = require('./middleware/authMiddleware');
 const CardDelivery = require('./models/CardDelivery');
 
 const app = express();
-
-
-
-
-// -------------------- MIDDLEWARE -------------------- //
-
-// Parse form data & JSON
-
-// ---------------- MIDDLEWARE ----------------
-
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
@@ -89,40 +77,9 @@ app.get("/dashboard", authMiddleware, async (req, res) => {
     }
 });
 
-
-// Protected dashboard (requires valid JWT cookie)
-app.get('/dashboard', authMiddleware, (req, res) => {
-  // req.user is set in authMiddleware from the decoded token
-  res.render('dashboard', { user: req.user });
-});
-
-// Audit Log routes (must be BEFORE 404 handler)
-const auditRoutes = require("./routes/auditRoutes");
-app.use("/", auditRoutes);
-
-// Simple home route -> redirect to login
-app.get('/', (req, res) => {
-  res.redirect('/login');
-});
-
-
-
-// 404 fallback (optional)
-app.use((req, res) => {
-  res.status(404).send('Page not found');
-});
-
-
-
-
-
-// -------------------- DATABASE + SERVER -------------------- //
-
-const MONGODB_URI = process.env.MONGODB_URI;
-const PORT = process.env.PORT || 5000;
-
 // API routes (signup, signin, logout)
 app.use("/", authRouter);
+
 // ---------------- DATABASE + SERVER ----------------
 mongoose
     .connect(process.env.MONGODB_URI)

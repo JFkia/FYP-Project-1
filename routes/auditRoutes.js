@@ -4,7 +4,7 @@ const router = express.Router();
 const { getAuditLogs } = require("../controllers/auditController");
 
 // System Activity Log page
-router.get("/audit-log", getAuditLogs);
+router.get("/auditLog", getAuditLogs);
 
 // Default route → redirect to audit log
 router.get("/", (req, res) => res.redirect("/audit-log"));
