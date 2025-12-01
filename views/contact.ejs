@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact Us • Card Delivery Portal</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #020617;
+            color: #e5e7eb;
+        }
+
+        /* HERO */
+        .contact-hero {
+            padding: 5rem 1.5rem 3.5rem;
+            background: radial-gradient(circle at top left, #4dabf7 0, #0b1120 40%, #020617 100%);
+            color: #f9fafb;
+        }
+
+        .contact-hero .badge-pill {
+            border-radius: 999px;
+            font-size: 0.75rem;
+            padding: 0.35rem 0.9rem;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            color: #e5e7eb;
+        }
+
+        .contact-hero h1 {
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .contact-hero p {
+            max-width: 640px;
+            font-size: 0.98rem;
+            color: #e5e7eb;
+            opacity: 0.9;
+        }
+
+        .contact-hero-sub {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* MAIN WRAPPER */
+        .contact-wrapper {
+            padding: 0 1.5rem 4rem;
+        }
+
+        .contact-card {
+            background: rgba(15, 23, 42, 0.96);
+            border-radius: 1.25rem;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+        }
+
+        /* LEFT: FORM */
+        .contact-form-section {
+            padding: 2.75rem 2.5rem;
+        }
+
+        .contact-form-section h2 {
+            color: #f9fafb;
+            font-size: 1.35rem;
+            font-weight: 600;
+        }
+
+        .contact-form-section p.lead-text {
+            font-size: 0.9rem;
+            color: #9ca3af;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #e5e7eb;
+        }
+
+        .form-control,
+        .form-select,
+        textarea.form-control {
+            background-color: #020617;
+            border-color: #1f2937;
+            color: #e5e7eb;
+        }
+
+        .form-control::placeholder,
+        textarea.form-control::placeholder {
+            color: #6b7280;
+        }
+
+        .form-control:focus,
+        .form-select:focus,
+        textarea.form-control:focus {
+            background-color: #020617;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+            color: #f9fafb;
+        }
+
+        .btn-primary {
+            border-radius: 999px;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            padding-block: 0.65rem;
+        }
+
+        .btn-primary:hover {
+            filter: brightness(1.05);
+        }
+
+        .helper-text {
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        /* RIGHT: LOCATIONS */
+        .locations-section {
+            padding: 2.75rem 2.5rem;
+            background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.18), #020617 45%);
+            border-left: 1px solid rgba(30, 64, 175, 0.45);
+        }
+
+        .locations-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .locations-header h3 {
+            color: #e5e7eb;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .badge-region {
+            font-size: 0.75rem;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            padding: 0.25rem 0.65rem;
+            color: #e5e7eb;
+            background: rgba(15, 23, 42, 0.7);
+        }
+
+        .location-card {
+            background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), rgba(15, 23, 42, 0.96));
+            border-radius: 0.9rem;
+            padding: 1rem 1.1rem;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            height: 100%;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s;
+        }
+
+        .location-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 35px rgba(0, 0, 0, 0.6);
+            border-color: rgba(56, 189, 248, 0.7);
+        }
+
+        .location-city {
+            font-weight: 600;
+            color: #f9fafb;
+            margin-bottom: 0.25rem;
+        }
+
+        .location-tag {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #9ca3af;
+            margin-bottom: 0.35rem;
+        }
+
+        .location-body {
+            font-size: 0.85rem;
+            color: #cbd5f5;
+        }
+
+        .location-body a {
+            color: #38bdf8;
+            text-decoration: none;
+        }
+
+        .location-body a:hover {
+            text-decoration: underline;
+        }
+
+        .map-placeholder {
+            margin-top: 1.5rem;
+            padding: 0.85rem 1rem;
+            border-radius: 0.9rem;
+            border: 1px dashed rgba(148, 163, 184, 0.4);
+            font-size: 0.8rem;
+            color: #9ca3af;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(15, 23, 42, 0.85);
+        }
+
+        .map-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: #38bdf8;
+            box-shadow: 0 0 0 6px rgba(56, 189, 248, 0.25);
+        }
+
+        @media (max-width: 991.98px) {
+            .contact-card {
+                border-radius: 1rem;
+            }
+            .locations-section {
+                border-left: none;
+                border-top: 1px solid rgba(30, 64, 175, 0.45);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%- include("partials/navbar") %>
+
+    <!-- Hero -->
+    <section class="contact-hero">
+        <div class="container">
+            <div class="mb-2">
+                <span class="badge-pill">Contact Us</span>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-lg-7">
+                    <h1 class="mb-3">Let’s talk about your card delivery operations.</h1>
+                    <p class="mb-2">
+                        Whether you’re reconciling large-scale debit card fulfilment, managing multiple couriers,
+                        or just starting to digitise your delivery workflows, our team is here to help.
+                        Share a few details and we’ll get back to you promptly.
+                    </p>
+                    <div class="contact-hero-sub">
+                        Typically replies within 1–2 business days.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="contact-wrapper">
+        <div class="container">
+            <div class="contact-card row g-0">
+                <!-- Left: form -->
+                <div class="col-lg-6 contact-form-section">
+                    <h2 class="mb-2">Send us a message</h2>
+                    <p class="lead-text mb-4">
+                        Tell us a bit about your use case. The more context you provide, the easier it is for us to route your query
+                        to the right team (operations, compliance, or technical).
+                    </p>
+
+                    <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+                        <div class="alert alert-danger py-2">
+                            <% errors.forEach(err => { %>
+                                <div><%= err %></div>
+                            <% }) %>
+                        </div>
+                    <% } %>
+
+                    <% if (typeof success !== 'undefined' && success) { %>
+                        <div class="alert alert-success py-2">
+                            Thank you for reaching out. Our team will get back to you shortly.
+                        </div>
+                    <% } %>
+
+                    <form action="/contact" method="POST" class="mt-3">
+                        <div class="row">
+                            <div class="mb-3 col-sm-6">
+                                <label class="form-label" for="name">Full name</label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    class="form-control"
+                                    placeholder="Jane Doe"
+                                    value="<%= (typeof formData !== 'undefined' && formData.name) ? formData.name : '' %>"
+                                    required
+                                >
+                            </div>
+                            <div class="mb-3 col-sm-6">
+                                <label class="form-label" for="email">Work email</label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    class="form-control"
+                                    placeholder="you@company.com"
+                                    value="<%= (typeof formData !== 'undefined' && formData.email) ? formData.email : '' %>"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="company">Company / Organisation</label>
+                            <input
+                                type="text"
+                                id="company"
+                                name="company"
+                                class="form-control"
+                                placeholder="Your company name"
+                                value="<%= (typeof formData !== 'undefined' && formData.company) ? formData.company : '' %>"
+                            >
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="topic">I’m interested in</label>
+                            <select
+                                id="topic"
+                                name="topic"
+                                class="form-select"
+                            >
+                                <option value="">Select an option</option>
+                                <option value="demo" <%= (typeof formData !== 'undefined' && formData.topic === 'demo') ? 'selected' : '' %>>
+                                    Product demo / walkthrough
+                                </option>
+                                <option value="integration" <%= (typeof formData !== 'undefined' && formData.topic === 'integration') ? 'selected' : '' %>>
+                                    API / system integration
+                                </option>
+                                <option value="operations" <%= (typeof formData !== 'undefined' && formData.topic === 'operations') ? 'selected' : '' %>>
+                                    Card delivery operations
+                                </option>
+                                <option value="support" <%= (typeof formData !== 'undefined' && formData.topic === 'support') ? 'selected' : '' %>>
+                                    Support / issue with existing setup
+                                </option>
+                                <option value="other" <%= (typeof formData !== 'undefined' && formData.topic === 'other') ? 'selected' : '' %>>
+                                    Other
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="message">How can we help?</label>
+                            <textarea
+                                id="message"
+                                name="message"
+                                class="form-control"
+                                rows="4"
+                                placeholder="Share details such as card volumes, markets, or current courier setup…"
+                                required
+                            ><%= (typeof formData !== 'undefined' && formData.message) ? formData.message : '' %></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mt-2">
+                            Submit enquiry
+                        </button>
+
+                        <p class="helper-text mt-3 mb-0">
+                            By submitting this form, you agree to be contacted about Card Delivery Portal products and services.
+                        </p>
+                    </form>
+                </div>
+
+                <!-- Right: locations -->
+                <div class="col-lg-6 locations-section">
+                    <div class="locations-header">
+                        <h3 class="mb-0">Our offices</h3>
+                        <span class="badge-region">Asia-Pacific & Beyond</span>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="location-card">
+                                <div class="location-tag">Headquarters</div>
+                                <div class="location-city">Singapore</div>
+                                <div class="location-body">
+                                    Card Delivery HQ<br>
+                                    1 Example Street, #10-01<br>
+                                    Singapore 123456<br>
+                                    <a href="mailto:hello@carddelivery.com">hello@carddelivery.com</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="location-card">
+                                <div class="location-tag">Operations</div>
+                                <div class="location-city">Jakarta, Indonesia</div>
+                                <div class="location-body">
+                                    Regional support for Southeast Asia card fulfilment and courier coordination.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="location-card">
+                                <div class="location-tag">Engineering</div>
+                                <div class="location-city">Manila, Philippines</div>
+                                <div class="location-body">
+                                    Product, data, and platform engineering teams for reconciliation and reporting.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="location-card">
+                                <div class="location-tag">Compliance</div>
+                                <div class="location-city">Bangkok, Thailand</div>
+                                <div class="location-body">
+                                    Support for regulatory, KYC/KYB, and card programme governance.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="location-card">
+                                <div class="location-tag">Partners</div>
+                                <div class="location-city">Ho Chi Minh City, Vietnam</div>
+                                <div class="location-body">
+                                    Working with issuers, programmes, and logistics partners across the region.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="map-placeholder mt-3">
+                        <span class="map-dot"></span>
+                        <div>
+                            <strong>Interactive map coming soon</strong><br>
+                            For now, reach out via the form and we’ll connect you with the nearest regional team.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <%- include("partials/footer") %>
+</body>
+</html>

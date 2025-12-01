@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login • Card Delivery Portal</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background: radial-gradient(circle at top left, #4dabf7, #0d1b2a 55%);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: #fff;
+        }
+
+        .auth-wrapper {
+            min-height: calc(100vh - 56px); /* account for navbar height if any */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 900px;
+            border-radius: 1.25rem;
+            overflow: hidden;
+            background: rgba(15, 23, 42, 0.9);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.4);
+        }
+
+        .auth-illustration {
+            background: linear-gradient(135deg, #0d6efd, #4dabf7);
+            color: #e2f3ff;
+        }
+
+        .auth-illustration h2 {
+            font-weight: 700;
+        }
+
+        .auth-illustration p {
+            opacity: 0.9;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #e5e7eb;
+        }
+
+        .form-control {
+            background-color: #0b1220;
+            border-color: #1f2937;
+            color: #e5e7eb;
+        }
+
+        .form-control:focus {
+            background-color: #020617;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+            color: #f9fafb;
+        }
+
+        .btn-primary {
+            border-radius: 999px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .small-link {
+            font-size: 0.9rem;
+        }
+
+        .badge-role {
+            background: rgba(15, 23, 42, 0.35);
+            border-radius: 999px;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.75rem;
+            border: 1px solid rgba(226, 232, 240, 0.2);
+        }
+
+        .input-icon-wrapper {
+            position: relative;
+        }
+        .input-icon-wrapper .icon-left {
+            position: absolute;
+            left: 0.85rem;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #9ca3af;
+        }
+        .input-icon-wrapper input {
+            padding-left: 2.5rem;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 0.85rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+        /* Sidebar*/
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -200px; 
+            width: 200px;
+            height: 100vh;
+            background: #0b1220;
+            border-right: 1px solid rgba(255,255,255,0.1);
+            transition: left 0.3s ease;
+            overflow: hidden;
+            z-index: 9999;
+            padding-top: 70px;
+        }
+
+
+        .sidebar-hover-zone {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px; /* sensitivity/hover area */
+            height: 100vh;
+            z-index: 9998;
+        }
+
+
+        .sidebar-hover-zone:hover + .sidebar,
+        .sidebar:hover {
+            left: 0;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar ul li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 18px;
+            color: #e5e7eb;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .sidebar ul li a:hover {
+            background: rgba(255,255,255,0.08);
+        }
+        .sidebar-icon {
+            width: 20px;
+            opacity: 0.85;
+        }
+
+    </style>
+</head>
+
+<body>
+    <%- include("partials/navbar") %>
+
+    
+    <div class="sidebar-hover-zone"></div>
+
+<!-- Sidebar -->
+    <div class="sidebar">
+        <ul>
+            <li>
+                <a href="/">
+                    Home
+                </a>
+            </li>
+            <li>
+                <a href="/dashboard">
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="/deliveries">
+                    Deliveries
+                </a>
+            </li>
+            <li>
+                <a href="/reports">
+                    Reports
+                </a>
+            </li>
+            <li>
+                <a href="/logout">
+                    Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+
+
+    <div class="auth-wrapper">
+        <div class="auth-card row g-0">
+            <!-- Left side / illustration -->
+            <div class="col-md-5 d-none d-md-flex auth-illustration flex-column justify-content-between p-4">
+                <div>
+                    <span class="badge-role mb-3">Secure Card Delivery Reconciliation</span>
+                    <h2 class="mb-3">Welcome back</h2>
+                    <p class="mb-0">
+                        Log in to monitor card dispatches, track delivery statuses, and quickly identify exceptions
+                        across your vendors and couriers.
+                    </p>
+                </div>
+                <div class="mt-4">
+                    <small class="d-block text-light opacity-75">
+                        Tip: Use your assigned corporate email to access admin, courier, or compliance tools.
+                    </small>
+                </div>
+            </div>
+
+            <!-- Right side / form -->
+            <div class="col-md-7 p-4 p-lg-5">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h1 class="h4 mb-0" style="color: #ffffff;">Sign in</h1>
+                    <span class="small text-muted">Card Delivery Portal</span>
+                </div>
+
+                <% if (errors && errors.length > 0) { %>
+                    <div class="alert alert-danger py-2">
+                        <% errors.forEach(err => { %>
+                            <div><%= err %></div>
+                        <% }) %>
+                    </div>
+                <% } %>
+
+                <form action="/signin" method="POST" class="mt-3">
+                    <div class="mb-3">
+                        <label class="form-label" for="email">Email address</label>
+                        <div class="input-icon-wrapper">
+                            <span class="icon-left">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M0 4a2 2 0 0 1 2-2h12a2 
+                                         2 0 0 1 2 2v8a2 2 0 0 1-2 
+                                         2H2a2 2 0 0 1-2-2V4z"/>
+                                    <path d="M.05 4.555L8 9.414l7.95-4.86A1.99 
+                                        1.99 0 0 0 14 4H2c-.69 0-1.294.35-1.65.555z"/>
+                                </svg>
+                            </span>
+                            <input type="email" id="email" name="email"
+                                   class="form-control" placeholder="you@company.com" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="password">Password</label>
+                        <div class="input-icon-wrapper">
+                            <span class="icon-left">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M8 1a4 4 0 0 0-4 
+                                        4v3h-.5A1.5 1.5 0 0 0 2 9.5v5A1.5 
+                                        1.5 0 0 0 3.5 16h9A1.5 1.5 0 0 0 
+                                        14 14.5v-5A1.5 1.5 0 0 0 12.5 
+                                        8H12V5a4 4 0 0 0-4-4zM6 
+                                        5a2 2 0 1 1 4 0v3H6V5z"/>
+                                </svg>
+                            </span>
+                            <input type="password" id="password" name="password"
+                                   class="form-control" placeholder="••••••••" required>
+                            <span class="toggle-password" onclick="togglePassword()">
+                                Show
+                            </span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 mt-2">
+                        Sign in
+                    </button>
+
+                    <p class="small-link text-center mt-3 text-muted" style="color: #ffffff;">
+                        Don't have an account?
+                        <a href="/signup" class="text-info text-decoration-none">Create one</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <%- include("partials/footer") %>
+
+    <script>
+        function togglePassword() {
+            const input = document.getElementById('password');
+            const toggle = document.querySelector('.toggle-password');
+            if (input.type === 'password') {
+                input.type = 'text';
+                toggle.textContent = 'Hide';
+            } else {
+                input.type = 'password';
+                toggle.textContent = 'Show';
+            }
+        }
+    </script>
+</body>
+</html>
