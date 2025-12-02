@@ -1,4 +1,12 @@
 {
+  "name": "card-delivery-portal",
+  "version": "1.0.0",
+  "description": "FYP - Card Delivery Reconciliation Portal (Node.js, Express, EJS, MongoDB)",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
@@ -9,5 +17,11 @@
     "mongoose": "^8.20.0",
     "multer": "^2.0.2",
     "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
