@@ -81,14 +81,25 @@ app.get('/contact', (req, res) => res.render('contact', { errors: [], formData: 
 app.get('/profile', authMiddleware, (req, res) => res.render('profile'));
 
 // Protected dashboard (any logged-in user)
+// Protected dashboard
 app.get('/dashboard', authMiddleware, async (req, res) => {
   try {
-    const deliveries = await CardDelivery.find().lean();
+    let deliveries;
+
+    // If admin -> see everything
+    if (req.user && req.user.role === 'admin') {
+      deliveries = await CardDelivery.find().lean();
+    } else {
+      // Normal user -> only see their own deliveries
+      // Assumes CardDelivery.recipient_name matches req.user.name (e.g. "Mr Ling")
+      deliveries = await CardDelivery.find({
+        recipient_name: req.user.name
+      }).lean();
+    }
 
     const stats = {
       total: deliveries.length,
       delivered: deliveries.filter(d => d.status === 'Delivered').length,
-      // Match the status values used in deliveries.ejs (Pending / Shipped / Delivered / Failed)
       inTransit: deliveries.filter(d => d.status === 'Shipped').length,
       exceptions: deliveries.filter(
         d => d.status === 'Failed' || d.status === 'Delayed'
@@ -109,6 +120,7 @@ app.get('/dashboard', authMiddleware, async (req, res) => {
     });
   }
 });
+
 
 // -------------------- ROUTER MOUNTING --------------------
 
