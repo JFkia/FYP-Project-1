@@ -1,105 +1,133 @@
 // app.js
 require('dotenv').config();
 
-const express = require('express');
-const mongoose = require('mongoose');
-const cookieParser = require('cookie-parser');
-const path = require('path');
+const express       = require('express');
+const mongoose      = require('mongoose');
+const cookieParser  = require('cookie-parser');
+const path          = require('path');
+const jwt           = require('jsonwebtoken');
+
+// Models
+const CardDelivery  = require('./models/CardDelivery');
 
 // Routers
-const contactRouter = require('./routes/contactRouter');
-const auditRouter = require('./routes/auditRouter');
-const authRouter = require('./routes/authRouter');
-const authMiddleware = require('./middleware/authMiddleware');
-const CardDelivery = require('./models/CardDelivery');
-const deliveryRouter = require('./routes/deliveryRouter');
-
-const exceptionRouter = require('./routes/exceptionRouter');  // <-- NEW ROUTER
-
-const app = express();
+const contactRouter   = require('./routes/contactRouter');
+const auditRouter     = require('./routes/auditRouter');
+const authRouter      = require('./routes/authRouter');
+const deliveryRouter  = require('./routes/deliveryRouter');
+const exceptionRouter = require('./routes/exceptionRouter');
 
 // Middleware
+const authMiddleware = require('./middleware/authMiddleware');
+
+const app  = express();
+const PORT = process.env.PORT || 5000;
+const MONGO_URI = process.env.MONGODB_URI;
+
+// -------------------- CORE MIDDLEWARE --------------------
+
+// Parse form data & JSON
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+// Cookies
 app.use(cookieParser());
 
-// Static folder
-app.use(express.static(path.join(__dirname, "public")));
+// Static assets
+app.use(express.static(path.join(__dirname, 'public')));
 
-// EJS setup
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
+// View engine (EJS)
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
-// Make user available in EJS
-app.use((req, res, next) => {
+// Attach decoded user (if any) to res.locals for all views
+function attachUserFromToken(req, res, next) {
+  res.locals.user = null;
+
+  const token = req.cookies.token;
+  if (!token) return next();
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    res.locals.user = decoded;
+    // Optional: also attach to req
+    req.user = decoded;
+  } catch (err) {
     res.locals.user = null;
-    if (req.cookies.token) {
-        try {
-            const jwt = require("jsonwebtoken");
-            const decoded = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
-            res.locals.user = decoded;
-        } catch (err) {
-            res.locals.user = null;
-        }
-    }
-    next();
-});
+  }
 
-// ---------------- ROUTES ----------------
+  next();
+}
 
-// Render pages
-app.get("/", (req, res) => res.redirect("/login"));
-app.get("/login", (req, res) => res.render("login", { errors: [] }));
-app.get("/signup", (req, res) => res.render("signup", { errors: [], formData: {} }));
-app.get("/about", (req, res) => res.render("about", { errors: [], formData: {} }));
-app.get("/contact", (req, res) => res.render("contact", { errors: [], formData: {} }));
-app.get("/profile", (req, res) => res.render("profile"));
+app.use(attachUserFromToken);
+
+// -------------------- PAGE ROUTES --------------------
+
+// Public pages
+app.get('/',        (req, res) => res.redirect('/login'));
+app.get('/login',   (req, res) => res.render('login',   { errors: [] }));
+app.get('/signup',  (req, res) => res.render('signup',  { errors: [], formData: {} }));
+app.get('/about',   (req, res) => res.render('about',   { errors: [], formData: {} }));
+app.get('/contact', (req, res) => res.render('contact', { errors: [], formData: {} }));
+app.get('/profile', (req, res) => res.render('profile'));
+
 // Protected dashboard
-app.get("/dashboard", authMiddleware, async (req, res) => {
-    try {
-        const deliveries = await CardDelivery.find().lean();
+app.get('/dashboard', authMiddleware, async (req, res) => {
+  try {
+    const deliveries = await CardDelivery.find().lean();
 
-        const stats = {
-            total: deliveries.length,
-            delivered: deliveries.filter(d => d.status === 'Delivered').length,
-            inTransit: deliveries.filter(d => d.status === 'InTransit').length,
-            exceptions: deliveries.filter(d => d.status === 'Failed' || d.status === 'Delayed').length,
-        };
+    const stats = {
+      total: deliveries.length,
+      delivered: deliveries.filter(d => d.status === 'Delivered').length,
+      // Match the status values used in deliveries.ejs (Pending / Shipped / Delivered / Failed)
+      inTransit: deliveries.filter(d => d.status === 'Shipped').length,
+      exceptions: deliveries.filter(
+        d => d.status === 'Failed' || d.status === 'Delayed'
+      ).length,
+    };
 
-        res.render("dashboard", {
-            user: req.user,
-            deliveries,
-            stats,
-        });
-    } catch (err) {
-        console.error(err);
-        res.render("dashboard", {
-            user: req.user,
-            deliveries: [],
-            stats: { total: 0, delivered: 0, inTransit: 0, exceptions: 0 },
-        });
-    }
+    res.render('dashboard', {
+      user: req.user,
+      deliveries,
+      stats,
+    });
+  } catch (err) {
+    console.error('Error loading dashboard:', err);
+    res.render('dashboard', {
+      user: req.user,
+      deliveries: [],
+      stats: { total: 0, delivered: 0, inTransit: 0, exceptions: 0 },
+    });
+  }
 });
 
-// API routes
-app.use("/", authRouter);
+// -------------------- ROUTER MOUNTING --------------------
 
-// Audit routes
-app.use("/", auditRouter);
+// Auth (login, logout, signup actions, etc.)
+app.use('/', authRouter);
 
-// Delivery routes
+// Contact (if your contactRouter handles POST /contact etc.)
+app.use('/', contactRouter);
+
+// Audit
+app.use('/', auditRouter);
+
+// Deliveries (protected)
 app.use('/deliveries', authMiddleware, deliveryRouter);
 
-// ---------------- Exception Routes ----------------
+// Exceptions (protected)
 app.use('/exceptions', authMiddleware, exceptionRouter);
 
-// ---------------- DATABASE + SERVER ----------------
+// -------------------- DATABASE & SERVER --------------------
+
 mongoose
-    .connect(process.env.MONGODB_URI)
-    .then(() => {
-        console.log("Connected to MongoDB");
-        app.listen(process.env.PORT || 5000, () => {
-            console.log("Server running on http://localhost:" + (process.env.PORT || 5000));
-        });
-    })
-    .catch((err) => console.error("MongoDB Error:", err));
+  .connect(MONGO_URI)
+  .then(() => {
+    console.log('✅ Connected to MongoDB');
+    app.listen(PORT, () => {
+      console.log(`Server running at http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('MongoDB connection error:', err);
+  });
