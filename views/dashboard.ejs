@@ -114,7 +114,26 @@
             <% if (deliveries && deliveries.length > 0) { %>
                 <% deliveries.forEach(d => { %>
                 <tr class="clickable-row" onclick="window.location='/deliveries'">
-                    <td><%= d.card_number %></td>
+                    <td>
+                        <% 
+                            // Get raw card number from your schema
+                            const rawCard = d.card_number || "";
+
+                            // Simple masking helper
+                            function maskCard(card) {
+                            if (!card) return "-";
+                            const clean = card.replace(/\s+/g, "");   // remove spaces
+                            const last4 = clean.slice(-4);
+                            return "**** **** **** " + last4;
+                            }
+                        %>
+
+                        <% if (user && user.role === "admin") { %>
+                            <%= rawCard %>   <!-- Admin sees full card number -->
+                        <% } else { %>
+                            <%= maskCard(rawCard) %>  <!-- Normal user sees masked -->
+                        <% } %>
+                    </td>
                     <td><%= d.recipient_name %></td>
                     <td><%= d.address %></td>
                     <td><%= d.courier || '-' %></td>
