@@ -14,6 +14,8 @@ const authMiddleware = require('./middleware/authMiddleware');
 const CardDelivery = require('./models/CardDelivery');
 const deliveryRouter = require('./routes/deliveryRouter');
 
+const exceptionRouter = require('./routes/exceptionRouter');  // <-- NEW ROUTER
+
 const app = express();
 
 // Middleware
@@ -21,13 +23,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-// Make /public folder available
+// Static folder
 app.use(express.static(path.join(__dirname, "public")));
 
 // EJS setup
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-// Make user available in ALL EJS files
+
+// Make user available in EJS
 app.use((req, res, next) => {
     res.locals.user = null;
     if (req.cookies.token) {
@@ -51,7 +54,6 @@ app.get("/signup", (req, res) => res.render("signup", { errors: [], formData: {}
 app.get("/about", (req, res) => res.render("about", { errors: [], formData: {} }));
 app.get("/contact", (req, res) => res.render("contact", { errors: [], formData: {} }));
 app.get("/profile", (req, res) => res.render("profile"));
-
 // Protected dashboard
 app.get("/dashboard", authMiddleware, async (req, res) => {
     try {
@@ -79,7 +81,7 @@ app.get("/dashboard", authMiddleware, async (req, res) => {
     }
 });
 
-// API routes (signup, signin, logout)
+// API routes
 app.use("/", authRouter);
 
 // Audit routes
@@ -87,6 +89,9 @@ app.use("/", auditRouter);
 
 // Delivery routes
 app.use('/deliveries', authMiddleware, deliveryRouter);
+
+// ---------------- Exception Routes ----------------
+app.use('/exceptions', authMiddleware, exceptionRouter);
 
 // ---------------- DATABASE + SERVER ----------------
 mongoose
