@@ -31,9 +31,12 @@
             <tr>
                 <td><%= item.customer %></td>
                 <td><%= item.vendor %></td>
-                <td><%= item.expectedDate.toISOString().slice(0,10) %></td>
-                
                 <td>
+                <%= item.expectedDate 
+                        ? new Date(item.expectedDate).toISOString().slice(0,10) 
+                        : 'N/A' 
+                %>
+                </td>
                     <% if(item.status === 'Failed') { %>
                         <span class="badge failed">Failed</span>
                     <% } else if (item.status === 'Delayed') { %>
