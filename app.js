@@ -50,7 +50,7 @@ function attachUserFromToken(req, res, next) {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     res.locals.user = decoded;
-    // Optional: also attach to req
+    // also attach to req so middlewares can use it
     req.user = decoded;
   } catch (err) {
     res.locals.user = null;
@@ -61,6 +61,15 @@ function attachUserFromToken(req, res, next) {
 
 app.use(attachUserFromToken);
 
+// Simple admin-only middleware
+function adminMiddleware(req, res, next) {
+  if (req.user && req.user.role === 'admin') {
+    return next();
+  }
+  // you can change this to res.redirect('/dashboard') if you prefer
+  return res.status(403).send('Access denied. Admins only.');
+}
+
 // -------------------- PAGE ROUTES --------------------
 
 // Public pages
@@ -69,9 +78,9 @@ app.get('/login',   (req, res) => res.render('login',   { errors: [] }));
 app.get('/signup',  (req, res) => res.render('signup',  { errors: [], formData: {} }));
 app.get('/about',   (req, res) => res.render('about',   { errors: [], formData: {} }));
 app.get('/contact', (req, res) => res.render('contact', { errors: [], formData: {} }));
-app.get('/profile', (req, res) => res.render('profile'));
+app.get('/profile', authMiddleware, (req, res) => res.render('profile'));
 
-// Protected dashboard
+// Protected dashboard (any logged-in user)
 app.get('/dashboard', authMiddleware, async (req, res) => {
   try {
     const deliveries = await CardDelivery.find().lean();
@@ -106,24 +115,27 @@ app.get('/dashboard', authMiddleware, async (req, res) => {
 // Auth (login, logout, signup actions, etc.)
 app.use('/', authRouter);
 
-// Contact (if your contactRouter handles POST /contact etc.)
+// Contact (e.g. POST /contact)
 app.use('/', contactRouter);
 
-// Audit
-app.use('/', auditRouter);
+// Admin-only modules
 
-// Deliveries (protected)
-app.use('/deliveries', authMiddleware, deliveryRouter);
+// Deliveries (admin only)
+app.use('/deliveries', authMiddleware, adminMiddleware, deliveryRouter);
 
-// Exceptions (protected)
-app.use('/exceptions', authMiddleware, exceptionRouter);
+// Exceptions (admin only)
+app.use('/exceptions', authMiddleware, adminMiddleware, exceptionRouter);
+
+// Audit log routes (admin only)
+// auditRouter itself defines routes like GET /auditLog, so we mount at '/'
+app.use('/', authMiddleware, adminMiddleware, auditRouter);
 
 // -------------------- DATABASE & SERVER --------------------
 
 mongoose
   .connect(MONGO_URI)
   .then(() => {
-    console.log('✅ Connected to MongoDB');
+    console.log('Connected to MongoDB');
     app.listen(PORT, () => {
       console.log(`Server running at http://localhost:${PORT}`);
     });
