@@ -92,41 +92,54 @@
 
         <!-- Table -->
         <div class="card-box mt-4">
-            <h4 class="mb-3">Delivery Records</h4>
+        <h4 class="mb-3">Delivery Records</h4>
 
-            <table class="table table-bordered table-striped bg-white">
-                <thead class="table-light">
-                    <tr>
-                        <th>Customer</th>
-                        <th>Card ID</th>
-                        <th>Vendor</th>
-                        <th>Dispatch Date</th>
-                        <th>Status</th>
-                        <th>Tracking #</th>
-                    </tr>
-                </thead>
+        <table class="table table-bordered table-striped bg-white">
+            <thead class="table-light">
+            <tr>
+                <th>Card #</th>
+                <th>Recipient</th>
+                <th>Address</th>
+                <th>Courier</th>
+                <th>Status</th>
+                <th>Updated At</th>
+            </tr>
+            </thead>
 
-                <tbody>
-                    <% if (deliveries && deliveries.length > 0) { %>
-                        <% deliveries.forEach(d => { %>
-                            <tr class="clickable-row" onclick="window.location='/deliveries'">
-                                <td><%= d.customerName %></td>
-                                <td><%= d.cardId %></td>
-                                <td><%= d.vendor %></td>
-                                <td><%= d.dispatchDate %></td>
-                                <td><%= d.status %></td>
-                                <td><%= d.trackingNumber %></td>
-                            </tr>
-                        <% }) %>
+            <tbody>
+            <% if (deliveries && deliveries.length > 0) { %>
+                <% deliveries.forEach(d => { %>
+                <tr class="clickable-row" onclick="window.location='/deliveries'">
+                    <td><%= d.card_number %></td>
+                    <td><%= d.recipient_name %></td>
+                    <td><%= d.address %></td>
+                    <td><%= d.courier || '-' %></td>
+                    <td><%= d.status %></td>
+                    <td>
+                    <% if (d.updated_at) { %>
+                        <%= new Date(d.updated_at).toISOString().slice(0,19).replace('T',' ') %>
                     <% } else { %>
-                        <tr>
-                            <td colspan="6" class="text-center text-muted">
-                                No delivery records found.
-                            </td>
-                        </tr>
+                        -
                     <% } %>
-                </tbody>
-            </table>
+                    </td>
+                </tr>
+                <% }) %>
+            <% } else { %>
+                <tr>
+                <td colspan="6" class="text-center text-muted">
+                    No delivery records found.
+                </td>
+                </tr>
+            <% } %>
+            </tbody>
+        </table>
+
+        <div class="mt-2 text-end">
+            <a href="/deliveries" class="btn btn-sm btn-outline-primary">
+            View All Deliveries
+            </a>
+        </div>
+        </div>
 
         </div>
     </div>
