@@ -1,0 +1,97 @@
+<!-- Sidebar -->
+    <div class="sidebar">
+    <style>
+       .sidebar {
+            position: fixed;
+            top: 0;
+            left: -200px; 
+            width: 200px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 1);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            transition: left 0.3s ease;
+            overflow: hidden;
+            z-index: 9999;
+            padding-top: 70px;
+        }
+
+
+        .sidebar-hover-zone {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px; /* sensitivity/hover area */
+            height: 100vh;
+            z-index: 9998;
+        }
+
+
+        .sidebar-hover-zone:hover + .sidebar,
+        .sidebar:hover {
+            left: 0;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar ul li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 18px;
+            color: #e5e7eb;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .sidebar ul li a:hover {
+            background: rgba(255,255,255,0.08);
+        }
+        .sidebar-icon {
+            width: 20px;
+            opacity: 0.85;
+        }
+    </style>
+        <ul>
+            <% if (user) { %>
+                <li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profile">Profile</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="/exception">Exceptions</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/report">Report</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/auditLog">Audit Trail</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/deliveries">Deliveries</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link text-danger fw-bold" href="/logout">Logout</a>
+                    </li>
+                </li>
+            <% } else { %>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">Login</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-primary fw-bold" href="/signup">Register</a>
+                </li>
+
+            <% } %>
+        </ul>
+    </div>

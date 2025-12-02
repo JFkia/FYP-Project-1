@@ -227,6 +227,8 @@
 
 <body>
     <%- include("partials/navbar") %>
+    <div class="sidebar-hover-zone"></div>
+    <%- include("partials/sidebar") %>
 
     <!-- Hero -->
     <section class="contact-hero">
@@ -248,196 +250,195 @@
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- Main content -->
-    <section class="contact-wrapper">
-        <div class="container">
-            <div class="contact-card row g-0">
-                <!-- Left: form -->
-                <div class="col-lg-6 contact-form-section">
-                    <h2 class="mb-2">Send us a message</h2>
-                    <p class="lead-text mb-4">
-                        Tell us a bit about your use case. The more context you provide, the easier it is for us to route your query
-                        to the right team (operations, compliance, or technical).
-                    </p>
+        <!-- Main content -->
+        <section class="contact-wrapper">
+            <div class="container">
+                <div class="contact-card row g-0">
+                    <!-- Left: form -->
+                    <div class="col-lg-6 contact-form-section">
+                        <h2 class="mb-2">Send us a message</h2>
+                        <p class="lead-text mb-4">
+                            Tell us a bit about your use case. The more context you provide, the easier it is for us to route your query
+                            to the right team (operations, compliance, or technical).
+                        </p>
 
-                    <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
-                        <div class="alert alert-danger py-2">
-                            <% errors.forEach(err => { %>
-                                <div><%= err %></div>
-                            <% }) %>
-                        </div>
-                    <% } %>
+                        <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+                            <div class="alert alert-danger py-2">
+                                <% errors.forEach(err => { %>
+                                    <div><%= err %></div>
+                                <% }) %>
+                            </div>
+                        <% } %>
 
-                    <% if (typeof success !== 'undefined' && success) { %>
-                        <div class="alert alert-success py-2">
-                            Thank you for reaching out. Our team will get back to you shortly.
-                        </div>
-                    <% } %>
+                        <% if (typeof success !== 'undefined' && success) { %>
+                            <div class="alert alert-success py-2">
+                                Thank you for reaching out. Our team will get back to you shortly.
+                            </div>
+                        <% } %>
 
-                    <form action="/contact" method="POST" class="mt-3">
-                        <div class="row">
-                            <div class="mb-3 col-sm-6">
-                                <label class="form-label" for="name">Full name</label>
+                        <form action="/contact" method="POST" class="mt-3">
+                            <div class="row">
+                                <div class="mb-3 col-sm-6">
+                                    <label class="form-label" for="name">Full name</label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        class="form-control"
+                                        placeholder="Jane Doe"
+                                        value="<%= (typeof formData !== 'undefined' && formData.name) ? formData.name : '' %>"
+                                        required
+                                    >
+                                </div>
+                                <div class="mb-3 col-sm-6">
+                                    <label class="form-label" for="email">Work email</label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        class="form-control"
+                                        placeholder="you@company.com"
+                                        value="<%= (typeof formData !== 'undefined' && formData.email) ? formData.email : '' %>"
+                                        required
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label" for="company">Company / Organisation</label>
                                 <input
                                     type="text"
-                                    id="name"
-                                    name="name"
+                                    id="company"
+                                    name="company"
                                     class="form-control"
-                                    placeholder="Jane Doe"
-                                    value="<%= (typeof formData !== 'undefined' && formData.name) ? formData.name : '' %>"
-                                    required
+                                    placeholder="Your company name"
+                                    value="<%= (typeof formData !== 'undefined' && formData.company) ? formData.company : '' %>"
                                 >
                             </div>
-                            <div class="mb-3 col-sm-6">
-                                <label class="form-label" for="email">Work email</label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    class="form-control"
-                                    placeholder="you@company.com"
-                                    value="<%= (typeof formData !== 'undefined' && formData.email) ? formData.email : '' %>"
-                                    required
+
+                            <div class="mb-3">
+                                <label class="form-label" for="topic">I’m interested in</label>
+                                <select
+                                    id="topic"
+                                    name="topic"
+                                    class="form-select"
                                 >
+                                    <option value="">Select an option</option>
+                                    <option value="demo" <%= (typeof formData !== 'undefined' && formData.topic === 'demo') ? 'selected' : '' %>>
+                                        Product demo / walkthrough
+                                    </option>
+                                    <option value="integration" <%= (typeof formData !== 'undefined' && formData.topic === 'integration') ? 'selected' : '' %>>
+                                        API / system integration
+                                    </option>
+                                    <option value="operations" <%= (typeof formData !== 'undefined' && formData.topic === 'operations') ? 'selected' : '' %>>
+                                        Card delivery operations
+                                    </option>
+                                    <option value="support" <%= (typeof formData !== 'undefined' && formData.topic === 'support') ? 'selected' : '' %>>
+                                        Support / issue with existing setup
+                                    </option>
+                                    <option value="other" <%= (typeof formData !== 'undefined' && formData.topic === 'other') ? 'selected' : '' %>>
+                                        Other
+                                    </option>
+                                </select>
                             </div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label class="form-label" for="company">Company / Organisation</label>
-                            <input
-                                type="text"
-                                id="company"
-                                name="company"
-                                class="form-control"
-                                placeholder="Your company name"
-                                value="<%= (typeof formData !== 'undefined' && formData.company) ? formData.company : '' %>"
-                            >
-                        </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="message">How can we help?</label>
+                                <textarea
+                                    id="message"
+                                    name="message"
+                                    class="form-control"
+                                    rows="4"
+                                    placeholder="Share details such as card volumes, markets, or current courier setup…"
+                                    required
+                                ><%= (typeof formData !== 'undefined' && formData.message) ? formData.message : '' %></textarea>
+                            </div>
 
-                        <div class="mb-3">
-                            <label class="form-label" for="topic">I’m interested in</label>
-                            <select
-                                id="topic"
-                                name="topic"
-                                class="form-select"
-                            >
-                                <option value="">Select an option</option>
-                                <option value="demo" <%= (typeof formData !== 'undefined' && formData.topic === 'demo') ? 'selected' : '' %>>
-                                    Product demo / walkthrough
-                                </option>
-                                <option value="integration" <%= (typeof formData !== 'undefined' && formData.topic === 'integration') ? 'selected' : '' %>>
-                                    API / system integration
-                                </option>
-                                <option value="operations" <%= (typeof formData !== 'undefined' && formData.topic === 'operations') ? 'selected' : '' %>>
-                                    Card delivery operations
-                                </option>
-                                <option value="support" <%= (typeof formData !== 'undefined' && formData.topic === 'support') ? 'selected' : '' %>>
-                                    Support / issue with existing setup
-                                </option>
-                                <option value="other" <%= (typeof formData !== 'undefined' && formData.topic === 'other') ? 'selected' : '' %>>
-                                    Other
-                                </option>
-                            </select>
-                        </div>
+                            <button type="submit" class="btn btn-primary w-100 mt-2">
+                                Submit enquiry
+                            </button>
 
-                        <div class="mb-3">
-                            <label class="form-label" for="message">How can we help?</label>
-                            <textarea
-                                id="message"
-                                name="message"
-                                class="form-control"
-                                rows="4"
-                                placeholder="Share details such as card volumes, markets, or current courier setup…"
-                                required
-                            ><%= (typeof formData !== 'undefined' && formData.message) ? formData.message : '' %></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-100 mt-2">
-                            Submit enquiry
-                        </button>
-
-                        <p class="helper-text mt-3 mb-0">
-                            By submitting this form, you agree to be contacted about Card Delivery Portal products and services.
-                        </p>
-                    </form>
-                </div>
-
-                <!-- Right: locations -->
-                <div class="col-lg-6 locations-section">
-                    <div class="locations-header">
-                        <h3 class="mb-0">Our offices</h3>
-                        <span class="badge-region">Asia-Pacific & Beyond</span>
+                            <p class="helper-text mt-3 mb-0">
+                                By submitting this form, you agree to be contacted about Card Delivery Portal products and services.
+                            </p>
+                        </form>
                     </div>
 
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <div class="location-card">
-                                <div class="location-tag">Headquarters</div>
-                                <div class="location-city">Singapore</div>
-                                <div class="location-body">
-                                    Card Delivery HQ<br>
-                                    1 Example Street, #10-01<br>
-                                    Singapore 123456<br>
-                                    <a href="mailto:hello@carddelivery.com">hello@carddelivery.com</a>
+                    <!-- Right: locations -->
+                    <div class="col-lg-6 locations-section">
+                        <div class="locations-header">
+                            <h3 class="mb-0">Our offices</h3>
+                            <span class="badge-region">Asia-Pacific & Beyond</span>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="location-card">
+                                    <div class="location-tag">Headquarters</div>
+                                    <div class="location-city">Singapore</div>
+                                    <div class="location-body">
+                                        Card Delivery HQ<br>
+                                        1 Example Street, #10-01<br>
+                                        Singapore 123456<br>
+                                        <a href="mailto:hello@carddelivery.com">hello@carddelivery.com</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="location-card">
+                                    <div class="location-tag">Operations</div>
+                                    <div class="location-city">Jakarta, Indonesia</div>
+                                    <div class="location-body">
+                                        Regional support for Southeast Asia card fulfilment and courier coordination.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="location-card">
+                                    <div class="location-tag">Engineering</div>
+                                    <div class="location-city">Manila, Philippines</div>
+                                    <div class="location-body">
+                                        Product, data, and platform engineering teams for reconciliation and reporting.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="location-card">
+                                    <div class="location-tag">Compliance</div>
+                                    <div class="location-city">Bangkok, Thailand</div>
+                                    <div class="location-body">
+                                        Support for regulatory, KYC/KYB, and card programme governance.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="location-card">
+                                    <div class="location-tag">Partners</div>
+                                    <div class="location-city">Ho Chi Minh City, Vietnam</div>
+                                    <div class="location-body">
+                                        Working with issuers, programmes, and logistics partners across the region.
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-sm-6">
-                            <div class="location-card">
-                                <div class="location-tag">Operations</div>
-                                <div class="location-city">Jakarta, Indonesia</div>
-                                <div class="location-body">
-                                    Regional support for Southeast Asia card fulfilment and courier coordination.
-                                </div>
+                        <div class="map-placeholder mt-3">
+                            <span class="map-dot"></span>
+                            <div>
+                                <strong>Interactive map coming soon</strong><br>
+                                For now, reach out via the form and we’ll connect you with the nearest regional team.
                             </div>
-                        </div>
-
-                        <div class="col-sm-6">
-                            <div class="location-card">
-                                <div class="location-tag">Engineering</div>
-                                <div class="location-city">Manila, Philippines</div>
-                                <div class="location-body">
-                                    Product, data, and platform engineering teams for reconciliation and reporting.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-6">
-                            <div class="location-card">
-                                <div class="location-tag">Compliance</div>
-                                <div class="location-city">Bangkok, Thailand</div>
-                                <div class="location-body">
-                                    Support for regulatory, KYC/KYB, and card programme governance.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-6">
-                            <div class="location-card">
-                                <div class="location-tag">Partners</div>
-                                <div class="location-city">Ho Chi Minh City, Vietnam</div>
-                                <div class="location-body">
-                                    Working with issuers, programmes, and logistics partners across the region.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="map-placeholder mt-3">
-                        <span class="map-dot"></span>
-                        <div>
-                            <strong>Interactive map coming soon</strong><br>
-                            For now, reach out via the form and we’ll connect you with the nearest regional team.
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     </section>
-
     <%- include("partials/footer") %>
 </body>
 </html>

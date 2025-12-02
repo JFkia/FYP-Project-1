@@ -1,38 +1,32 @@
 // models/CardDelivery.js
 const mongoose = require('mongoose');
 
-const STATUS = ['Delivered', 'InTransit', 'Failed', 'Delayed', 'Pending'];
+const STATUS = ['Pending', 'Shipped', 'Delivered', 'Failed'];
 
 const cardDeliverySchema = new mongoose.Schema(
   {
-    customerName: {
+    card_number: {
       type: String,
       required: true,
       trim: true,
     },
 
-    cardId: {
+    recipient_name: {
       type: String,
       required: true,
       trim: true,
     },
 
-    vendor: {
+    address: {
       type: String,
       required: true,
       trim: true,
     },
 
-    trackingNumber: {
+    courier: {
       type: String,
-      required: true,
       trim: true,
-      unique: true,
-    },
-
-    dispatchDate: {
-      type: Date,
-      required: true,
+      default: "-",
     },
 
     status: {
@@ -41,22 +35,15 @@ const cardDeliverySchema = new mongoose.Schema(
       default: 'Pending',
     },
 
-    // Optional: link to courier user
-    courier: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      default: null,
-    },
-
-    // Optional: any notes / exception reason
-    notes: {
-      type: String,
-      trim: true,
+    updated_at: {
+      type: Date,
+      default: Date.now,
     },
   },
   {
-    timestamps: true, // adds createdAt, updatedAt
+    timestamps: { createdAt: "created_at", updatedAt: false }
+    // We manually manage updated_at
   }
 );
 
-module.exports = mongoose.model('CardDelivery', cardDeliverySchema);
+module.exports = mongoose.model("CardDelivery", cardDeliverySchema);
